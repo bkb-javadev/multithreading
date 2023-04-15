@@ -23,7 +23,7 @@ public class Main {
         ExecutorService executorService = Executors.newFixedThreadPool(3);
 
         for (int i = 0; i < 10; i++) {
-            executorService.submit(Main::payment);
+            executorService.submit(Main::operation);
         }
 
         executorService.shutdown();
@@ -37,7 +37,26 @@ public class Main {
         }
     }
 
-    public static void payment() {
+    public static void operation() {
+        lock.lock();
+        Account account = accounts.get(random.nextInt(accounts.size()));
+        BigDecimal amount = new BigDecimal(random.nextInt(5000));
+        if (random.nextInt(2) == 0) {
+            System.out.println("Пополнение счета " + account + " на сумму " + amount);
+            account.deposit(amount);
+        } else {
+            System.out.println("Списание со счета " + account + " на сумму " + amount);
+            if (account.getBalance().compareTo(amount) >= 0) {
+                account.withdraw(amount);
+            } else {
+                System.out.println("Ошибка платежа!");
+            }
+        }
+        System.out.println("Итоговый баланс счета " + account.getBalance() + "\n");
+        lock.unlock();
+    }
+
+    public static void transfer() {
         lock.lock();
 
         Account account1 = accounts.get(random.nextInt(accounts.size()));
