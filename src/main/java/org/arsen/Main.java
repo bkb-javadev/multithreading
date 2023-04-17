@@ -40,7 +40,7 @@ public class Main {
     public static void operation() {
         lock.lock();
         Account account = accounts.get(random.nextInt(accounts.size()));
-        BigDecimal amount = new BigDecimal(random.nextInt(5000));
+        BigDecimal amount = new BigDecimal(random.nextInt(3000));
         if (random.nextInt(2) == 0) {
             System.out.println("Пополнение счета " + account + " на сумму " + amount);
             account.deposit(amount);
@@ -49,10 +49,15 @@ public class Main {
             if (account.getBalance().compareTo(amount) >= 0) {
                 account.withdraw(amount);
             } else {
-                System.out.println("Ошибка платежа!");
+                System.out.println("Ошибка! Недостаточно средств");
             }
         }
         System.out.println("Итоговый баланс счета " + account.getBalance() + "\n");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         lock.unlock();
     }
 
@@ -75,7 +80,7 @@ public class Main {
         if (account1.getBalance().compareTo(amount) >= 0) {
             Account.transfer(account1, account2, amount);
         } else {
-            System.out.println("Ошибка перевода!");
+            System.out.println("Ошибка! Недостаточно средств");
         }
 
         System.out.println("Итого: " +
